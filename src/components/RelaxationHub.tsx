@@ -12,17 +12,21 @@ export default function RelaxationHub() {
   // Live Timer Animation Logic
   useEffect(() => {
     if (!isBreathing) {
-      setPhase("READY?");
-      setTimeLeft(null);
-      return;
+      const timer = setTimeout(() => {
+        setPhase("READY?");
+        setTimeLeft(null);
+      }, 0);
+      return () => clearTimeout(timer);
     }
 
     let isMounted = true;
     let currentPhase = "INHALE";
     let ticks = 4;
     
-    setPhase("INHALE");
-    setTimeLeft(4);
+    const initTimer = setTimeout(() => {
+      setPhase("INHALE");
+      setTimeLeft(4);
+    }, 0);
 
     const interval = setInterval(() => {
       if (!isMounted) return;
@@ -49,6 +53,7 @@ export default function RelaxationHub() {
     return () => {
       isMounted = false;
       clearInterval(interval);
+      clearTimeout(initTimer);
     };
   }, [isBreathing]);
 

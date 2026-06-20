@@ -4,11 +4,13 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { BookHeart, Wind, Puzzle, Send, Loader2, Headphones, Timer, ActivitySquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import RelaxationHub from "@/components/RelaxationHub";
-import MusicRelaxation from "@/components/MusicRelaxation";
-import BrainGame from "@/components/BrainGame";
-import FocusProtocol from "@/components/FocusProtocol";
-import MoodGrid from "@/components/MoodGrid";
+import dynamic from "next/dynamic";
+
+const RelaxationHub = dynamic(() => import("@/components/RelaxationHub"), { loading: () => <div className="text-2xl font-bold uppercase animate-pulse">LOADING BREATHE PROTOCOL...</div> });
+const MusicRelaxation = dynamic(() => import("@/components/MusicRelaxation"), { loading: () => <div className="text-2xl font-bold uppercase animate-pulse">LOADING AUDIO SUBSYSTEM...</div> });
+const BrainGame = dynamic(() => import("@/components/BrainGame"), { loading: () => <div className="text-2xl font-bold uppercase animate-pulse">LOADING GAME ENGINE...</div> });
+const FocusProtocol = dynamic(() => import("@/components/FocusProtocol"), { loading: () => <div className="text-2xl font-bold uppercase animate-pulse">LOADING FOCUS PROTOCOL...</div> });
+const MoodGrid = dynamic(() => import("@/components/MoodGrid"), { loading: () => <div className="text-2xl font-bold uppercase animate-pulse">LOADING MOOD MATRIX...</div> });
 
 const TABS = [
   { id: "journal", icon: BookHeart, label: "AI JOURNAL", color: "bg-[#FF2D55]" },
@@ -40,7 +42,7 @@ export default function Home() {
       });
       const data = await res.json();
       setAiResponse(data.message || "SYSTEM: I'M HERE FOR YOU.");
-    } catch (error) {
+    } catch {
       setAiResponse("SYSTEM ERROR: CANNOT CONNECT. KEEP BREATHING.");
     } finally {
       setIsAnalyzing(false);
@@ -53,7 +55,7 @@ export default function Home() {
   return (
     <div className="flex h-screen overflow-hidden selection:bg-[#000] selection:text-[#fff]">
       {/* Brutalist Wheel Navigation */}
-      <aside className="w-[450px] shrink-0 relative flex items-center bg-white border-r-8 border-black z-20 shadow-[12px_0_0_0_#000] overflow-hidden">
+      <nav aria-label="Main Navigation Wheel" className="w-[450px] shrink-0 relative flex items-center bg-white border-r-8 border-black z-20 shadow-[12px_0_0_0_#000] overflow-hidden">
         {/* Title */}
         <div className="absolute top-8 left-8 z-50">
           <h1 className="text-5xl font-black uppercase tracking-tighter bg-black text-[#FFCC00] px-4 py-2 border-4 border-black shadow-[6px_6px_0_0_#FF2D55]">
@@ -76,17 +78,21 @@ export default function Home() {
                   className="absolute inset-0 flex items-center justify-end pr-10 pointer-events-none"
                   style={{ transform: `rotate(${angle}deg)` }}
                 >
-                  <div 
-                    className="flex items-center gap-4 hover:scale-105 transition-transform origin-right pointer-events-auto cursor-pointer"
+                  <button 
+                    className="flex items-center gap-4 hover:scale-105 transition-transform origin-right pointer-events-auto cursor-pointer border-none bg-transparent"
                     onClick={() => setActiveTab(i)}
+                    aria-label={`Switch to ${tab.label}`}
+                    aria-selected={activeTab === i}
+                    role="tab"
+                    tabIndex={0}
                   >
                     <span className={`text-2xl font-black uppercase ${activeTab === i ? 'text-black' : 'text-gray-400'}`}>
                       {tab.label}
                     </span>
                     <div className={`w-20 h-20 rounded-full border-8 border-black flex items-center justify-center transition-colors duration-300 ${activeTab === i ? tab.color : 'bg-white'} ${activeTab === i && tab.color.includes('black') ? 'text-white' : 'text-black'}`}>
-                      <tab.icon size={36} />
+                      <tab.icon size={36} aria-hidden="true" />
                     </div>
-                  </div>
+                  </button>
                 </div>
               );
             })}
@@ -97,10 +103,10 @@ export default function Home() {
             <div className="w-16 h-16 bg-[#FF2D55] rounded-full border-4 border-black" />
           </div>
         </div>
-      </aside>
+      </nav>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto relative z-0 p-12 bg-transparent">
+      <main role="main" className="flex-1 overflow-y-auto relative z-0 p-12 bg-transparent">
         <div className="max-w-4xl mx-auto min-h-full flex flex-col justify-center">
           
           <motion.div 
@@ -158,18 +164,18 @@ export default function Home() {
                           <div className="text-black text-xl font-bold">
                             <ReactMarkdown
                               components={{
-                                h3: ({node, ...props}) => <h3 className="text-2xl font-black bg-black text-[#FFCC00] px-4 py-2 mt-8 mb-4 border-4 border-black shadow-[4px_4px_0_0_#FF2D55] inline-block uppercase" {...props} />,
-                                p: ({node, ...props}) => <p className="mb-6 leading-relaxed" {...props} />,
-                                ul: ({node, ...props}) => <ul className="list-none space-y-4 mb-6" {...props} />,
-                                li: ({node, ...props}) => (
+                                h3: ({...props}) => <h3 className="text-2xl font-black bg-black text-[#FFCC00] px-4 py-2 mt-8 mb-4 border-4 border-black shadow-[4px_4px_0_0_#FF2D55] inline-block uppercase" {...props} />,
+                                p: ({...props}) => <p className="mb-6 leading-relaxed" {...props} />,
+                                ul: ({...props}) => <ul className="list-none space-y-4 mb-6" {...props} />,
+                                li: ({...props}) => (
                                   <li className="flex items-start gap-4">
                                     <div className="w-4 h-4 bg-[#FF2D55] mt-1.5 border-2 border-black shrink-0" />
                                     <span {...props} />
                                   </li>
                                 ),
-                                strong: ({node, ...props}) => <strong className="bg-[#00C7BE] px-2 py-1 border-2 border-black text-black uppercase tracking-wide" {...props} />,
-                                em: ({node, ...props}) => <em className="italic bg-[#FFCC00] px-1 border-b-4 border-black text-black" {...props} />,
-                                hr: ({node, ...props}) => <hr className="my-8 border-t-8 border-black" {...props} />
+                                strong: ({...props}) => <strong className="bg-[#00C7BE] px-2 py-1 border-2 border-black text-black uppercase tracking-wide" {...props} />,
+                                em: ({...props}) => <em className="italic bg-[#FFCC00] px-1 border-b-4 border-black text-black" {...props} />,
+                                hr: ({...props}) => <hr className="my-8 border-t-8 border-black" {...props} />
                               }}
                             >
                               {aiResponse}

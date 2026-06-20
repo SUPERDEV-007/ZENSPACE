@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Terminal } from "lucide-react";
 
 const COLORS = [
@@ -40,7 +40,8 @@ export default function SequenceProtocol() {
 
   useEffect(() => {
     if (sequence.length > 0 && !gameOver) {
-      playSequence(sequence);
+      const timer = setTimeout(() => playSequence(sequence), 0);
+      return () => clearTimeout(timer);
     }
   }, [sequence, gameOver]);
 

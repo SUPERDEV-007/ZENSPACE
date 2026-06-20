@@ -4,6 +4,13 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const apiKey = process.env.GEMINI_API_KEY;
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
 
+/**
+ * Handles POST requests to analyze a user's journal entry using the Gemini AI API.
+ * 
+ * @param {Request} req - The incoming HTTP request containing the journal text.
+ * @returns {Promise<NextResponse>} A JSON response containing the AI's empathetic analysis,
+ *                                  or an error message if the input is invalid or fails processing.
+ */
 export async function POST(req: Request) {
   try {
     if (!genAI) {
@@ -15,18 +22,31 @@ export async function POST(req: Request) {
 
     const { text } = await req.json();
 
-    if (!text) {
+    if (!text || typeof text !== "string") {
       return NextResponse.json(
-        { message: "Please provide a journal entry." },
+        { message: "SYSTEM ERROR: INVALID INPUT." },
         { status: 400 }
       );
     }
+
+    if (text.length > 5000) {
+      return NextResponse.json(
+        { message: "SYSTEM ERROR: LOG EXCEEDS MAXIMUM PERMITTED LENGTH." },
+        { status: 413 }
+      );
+    }
+
+    // Sanitize basic HTML tags (rudimentary XSS prevention for API processing)
+    const sanitizedText = text.replace(/<[^>]*>?/gm, '');
 
     const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
     const prompt = `You are an empathetic, highly supportive digital wellness companion designed to help students dealing with severe stress, burnout, and self-doubt during high-stakes board exams and competitive entrance tests (NEET, JEE, CUET, CAT, GATE, UPSC, etc.).
 
 Your task is to analyze the following daily journal entry from a student. 
+
+Student's Journal Entry:
+"${sanitizedText}"
 
 Please provide a response that:
 1. Validates their feelings empathetically.
@@ -45,10 +65,11 @@ Student Journal Entry:
     const aiMessage = response.text();
 
     return NextResponse.json({ message: aiMessage });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Gemini API Error:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { message: `An error occurred: ${error.message || error}` },
+      { message: `An error occurred: ${errorMessage}` },
       { status: 500 }
     );
   }

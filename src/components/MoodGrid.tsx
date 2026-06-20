@@ -19,15 +19,18 @@ export default function MoodGrid() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem("zenspace_mood_grid");
-    if (saved) {
-      try {
-        setGridData(JSON.parse(saved));
-      } catch (e) {
-        // ignore parse error
+    const timer = setTimeout(() => {
+      setMounted(true);
+      const saved = localStorage.getItem("zenspace_mood_grid");
+      if (saved) {
+        try {
+          setGridData(JSON.parse(saved));
+        } catch {
+          // ignore parse error
+        }
       }
-    }
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const updateMood = (dayIndex: number, mood: MoodType) => {

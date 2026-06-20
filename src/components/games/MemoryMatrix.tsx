@@ -6,7 +6,7 @@ import { Brain, Star, Cloud, Moon, Sun, Coffee, Sparkles, Heart } from "lucide-r
 const ICONS = [Brain, Star, Cloud, Moon, Sun, Coffee, Sparkles, Heart];
 
 export default function MemoryMatrix() {
-  const [cards, setCards] = useState<{ id: number; icon: any; isFlipped: boolean; isMatched: boolean }[]>([]);
+  const [cards, setCards] = useState<{ id: number; icon: React.ElementType; isFlipped: boolean; isMatched: boolean }[]>([]);
   const [flippedIds, setFlippedIds] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
   const [matches, setMatches] = useState(0);
@@ -22,7 +22,8 @@ export default function MemoryMatrix() {
   };
 
   useEffect(() => {
-    initializeGame();
+    const timer = setTimeout(() => initializeGame(), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleCardClick = (id: number) => {
