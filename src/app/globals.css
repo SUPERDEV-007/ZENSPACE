@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f4f0e6;
+  --foreground: #000000;
+  --primary: #FF2D55; /* Hot Pink */
+  --secondary: #FFCC00; /* Cyber Yellow */
+  --accent: #00C7BE; /* Cyan */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  
+  --font-sans: var(--font-space), ui-monospace, SFMono-Regular, monospace;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+  /* Retro Grid pattern for brutalist background */
+  background-image: linear-gradient(#000000 1px, transparent 1px), linear-gradient(90deg, #000000 1px, transparent 1px);
+  background-size: 60px 60px;
+  background-position: -1px -1px;
+}
+
+/* Brutalist Panel */
+.brutalist-panel {
+  background-color: #ffffff;
+  border: 4px solid #000000;
+  box-shadow: 12px 12px 0px 0px rgba(0,0,0,1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.brutalist-panel-hover:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 16px 16px 0px 0px rgba(0,0,0,1);
+}
+
+/* Brutalist Button */
+.brutalist-button {
+  border: 4px solid #000000;
+  box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+  font-weight: 800;
+  text-transform: uppercase;
+  transition: all 0.1s;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brutalist-button:active:not(:disabled) {
+  transform: translate(4px, 4px);
+  box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+}
+
+.brutalist-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: translate(2px, 2px);
+  box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+}
+
+@keyframes eq {
+  0% { height: 8px; }
+  100% { height: 32px; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
