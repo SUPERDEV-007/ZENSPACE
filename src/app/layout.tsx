@@ -9,8 +9,17 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ZENSPACE | BRUTAL",
-  description: "Neo-Brutalist Mental Wellness Tracker.",
+  title: "ZenSpace | Neo-Brutalist Mental Wellness",
+  description: "A high-contrast, distraction-free mental wellness dashboard designed specifically to help high-stress students manage burnout and regain absolute focus.",
+  keywords: "mental health, focus, pomodoro timer, student wellness, brutalism, ai journal, stress management",
+  authors: [{ name: "ZenSpace Team" }],
+  openGraph: {
+    title: "ZenSpace",
+    description: "Neo-Brutalist mental wellness for high-stress students.",
+    url: "https://zenspace-app.netlify.app",
+    siteName: "ZenSpace",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

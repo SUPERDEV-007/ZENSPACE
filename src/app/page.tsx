@@ -133,6 +133,7 @@ export default function Home() {
                     value={journalEntry}
                     onChange={(e) => setJournalEntry(e.target.value)}
                     placeholder="ENTER YOUR LOG HERE..."
+                    aria-label="Journal Entry"
                     className="w-full h-72 bg-transparent border-none text-black placeholder:text-gray-300 focus:outline-none focus:ring-0 resize-none text-2xl font-bold tracking-wide"
                   />
                   <div className="absolute bottom-6 right-6">

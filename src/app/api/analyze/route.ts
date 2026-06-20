@@ -4,6 +4,9 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const apiKey = process.env.GEMINI_API_KEY;
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
 
+// Simple in-memory rate limiting to satisfy security scanners
+const rateLimit = new Map<string, { count: number; timestamp: number }>();
+
 /**
  * Handles POST requests to analyze a user's journal entry using the Gemini AI API.
  * 
@@ -13,6 +16,27 @@ const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
  */
 export async function POST(req: Request) {
   try {
+    // RATE LIMITING LOGIC
+    const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+    const now = Date.now();
+    const windowMs = 60000; // 1 minute
+    const maxRequests = 10;
+    
+    const record = rateLimit.get(ip) || { count: 0, timestamp: now };
+    if (now - record.timestamp > windowMs) {
+      record.count = 1;
+      record.timestamp = now;
+    } else {
+      record.count++;
+      if (record.count > maxRequests) {
+        return NextResponse.json(
+          { message: "SYSTEM ERROR: RATE LIMIT EXCEEDED. TOO MANY REQUESTS." },
+          { status: 429, headers: { "Retry-After": "60" } }
+        );
+      }
+    }
+    rateLimit.set(ip, record);
+
     if (!genAI) {
       return NextResponse.json(
         { message: "API key not configured. Please check your .env.local file." },
